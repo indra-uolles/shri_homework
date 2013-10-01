@@ -1,0 +1,82 @@
+.background{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	width:  1024px;
+	height: 590px;
+	background: url(../img/background.png) no-repeat;
+}
+#scroll-homer, #scroll-marge, #scroll-couch, #scroll-lisa, #scroll-bart, #scroll-little {
+	position: relative;
+	overflow: visible;
+}
+#scroll-couch {
+	top: 30%;
+	left: 24%;
+	width: 220px;
+	height: 220px;
+}
+#scroll-homer, #scroll-marge, #scroll-lisa, #scroll-bart {
+	width: 160px;
+	height: 348px;
+}
+#scroll-little{
+	width: 90px;
+	height: 123px;
+}
+#scroll-marge {
+	top: -10%;
+	left: 60%;
+}
+#scroll-homer {
+	top: -70%;
+	left: 26%;
+}
+#scroll-lisa {
+	top: -120%;
+	left: 50%;
+}
+#scroll-bart {
+	top: -185%;
+	left: 40%;
+}
+#scroll-little {
+	top: -230%;
+	left: 48%;
+}
+li.couch, li.marge, li.homer, li.lisa, li.bart, li.little {
+	position: inherit;
+}
+li.couch {
+	z-index: 1;
+	width: 200px;
+	height: 200px;
+}
+li.marge, li.homer{
+	width: 140px;
+	height: 348px;
+}
+li.bart{
+	width: 103px;
+	height: 202px;
+}	
+li.lisa{
+	width: 109px;
+	height: 182px;
+}	
+li.little{
+	width: 77px;
+	height: 123px;
+}
+li.marge, li.homer, li.little {
+	z-index: 3;
+}
+li.lisa {
+	z-index: 2;
+}	
+li.bart {
+	z-index: 2;
+}	
