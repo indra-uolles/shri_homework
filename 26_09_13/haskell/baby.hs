@@ -19,59 +19,59 @@ import Data.List
 
 getPathsFromSourceToDestinations ::  [(Integer, Double)] -> [(String, Double)] -> [(Integer, [Integer])] -> [(Integer, Bool)] -> [(Integer, Integer)] -> Integer -> [String]
 getPathsFromSourceToDestinations d w out_vs v p source = let g = getCalculatedParentsCosts (d, w, out_vs, v, p, source)
-														 in (let parents = ffth_of_six g;
-														 	     costs   = fst_of_six g;
-														 	     vertices = [a | (a,b) <- d, a /= source]
-														 	 in [getPathInfo costs parents source a | a <- vertices])
+                                                         in (let parents = ffth_of_six g;
+                                                                 costs   = fst_of_six g;
+                                                                 vertices = [a | (a,b) <- d, a /= source]
+                                                             in [getPathInfo costs parents source a | a <- vertices])
 
 getPathInfo :: [(Integer, Double)] -> [(Integer, Integer)] -> Integer -> Integer -> String
 getPathInfo d p source destination = "path from source to " ++ show destination ++ " goes through these vertices: " ++ 
-								show path_vertices ++ " and costs " ++ show (getVertexDistance d destination)
-	where path_vertices = frth_of_four $ getPathFromSource (p, source, destination, [])
+                                show path_vertices ++ " and costs " ++ show (getVertexDistance d destination)
+    where path_vertices = frth_of_four $ getPathFromSource (p, source, destination, [])
  
 
 getPathFromSource :: ([(Integer, Integer)], Integer, Integer, [Integer]) -> ([(Integer, Integer)], Integer, Integer, [Integer])
 getPathFromSource g = (if (snd_of_four g) == (thrd_of_four g) 
-					   then g
-					   else let new_v = getParentbyVertexNumber (first_of_four g) (thrd_of_four g)
-							in (let new_path = (thrd_of_four g) : (frth_of_four g)
-								in (getPathFromSource ((first_of_four g), (snd_of_four g), new_v, new_path))))
+                       then g
+                       else let new_v = getParentbyVertexNumber (first_of_four g) (thrd_of_four g)
+                            in (let new_path = (thrd_of_four g) : (frth_of_four g)
+                                in (getPathFromSource ((first_of_four g), (snd_of_four g), new_v, new_path))))
 
 
 getParentbyVertexNumber :: [(Integer, Integer)] -> Integer -> Integer
 getParentbyVertexNumber parents v = snd  $ parents !! v'
-	where v' = fromIntegral (pred v) :: Int
+    where v' = fromIntegral (pred v) :: Int
 
 --calculation of nencessary data for getting the shortest paths (distances and parents)
 getCalculatedParentsCosts :: ([(Integer, Double)], [(String, Double)], [(Integer, [Integer])], [(Integer, Bool)], [(Integer, Integer)], Integer) -> ([(Integer, Double)],[(String, Double)],[(Integer, [Integer])], [(Integer, Bool)], [(Integer, Integer)], Integer)
 getCalculatedParentsCosts g = (if sxth_of_six g == 0 
-							   then g 
-							   else (getCalculatedParentsCosts $ getUpdatedAll 
-							   (fst_of_six g) (snd_of_six g) (thr_of_six g) (frth_of_six g) (ffth_of_six g) (sxth_of_six g)))
+                               then g 
+                               else (getCalculatedParentsCosts $ getUpdatedAll 
+                               (fst_of_six g) (snd_of_six g) (thr_of_six g) (frth_of_six g) (ffth_of_six g) (sxth_of_six g)))
 
 getUpdatedAll :: [(Integer, Double)] -> [(String, Double)] -> [(Integer, [Integer])] -> [(Integer, Bool)] -> [(Integer, Integer)] -> Integer -> ([(Integer, Double)],[(String, Double)],[(Integer, [Integer])],[(Integer, Bool)],[(Integer, Integer)],Integer)
 getUpdatedAll d w out_vs v p v_next = let new_visited = getUpdatedVisited v v_next; 
-										  new_dp = getUpdatedDistancesParents d w out_vs p v_next
-										  in (let new_distances = fst new_dp; new_parents = snd new_dp 
-											  in (let new_v_next = getNextVertex new_visited new_distances out_vs
-												  in (new_distances, w, out_vs, new_visited, new_parents, new_v_next)))
-												  
+                                          new_dp = getUpdatedDistancesParents d w out_vs p v_next
+                                          in (let new_distances = fst new_dp; new_parents = snd new_dp 
+                                              in (let new_v_next = getNextVertex new_visited new_distances out_vs
+                                                  in (new_distances, w, out_vs, new_visited, new_parents, new_v_next)))
+                                                  
 getUpdatedVisited :: [(Integer, Bool)] -> Integer -> [(Integer, Bool)]
 getUpdatedVisited v v_next = [(a,new_val) | (a,b) <- v, let new_val = (if a == v_next then True else b)]
-												  
---getting updated distances and parents after vertices relaxation												  
+                                                  
+--getting updated distances and parents after vertices relaxation                                                 
 getUpdatedDistancesParents :: [(Integer, Double)] -> [(String, Double)] -> [(Integer, [Integer])] -> [(Integer, Integer)] -> Integer -> ([(Integer, Double)],[(Integer, Integer)])
 getUpdatedDistancesParents d w out_vs p v_next = (let new_d = getNextDistances d w v_next out_vs 
-												  in (let changed = getVerticesWithChangedDistance new_d d; 
-												          new_p = getUpdatedParents p changed v_next 
-												      in (new_d, new_p)))
+                                                  in (let changed = getVerticesWithChangedDistance new_d d; 
+                                                          new_p = getUpdatedParents p changed v_next 
+                                                      in (new_d, new_p)))
 
 getNextDistances :: [(Integer, Double)] -> [(String, Double)] -> Integer -> [(Integer, [Integer])] -> [(Integer, Double)]
 getNextDistances d w v_next out_vs = [(a, d_next) | (a,b) <- d, let d_next = (if a `elem` next_out 
-																			  then  getNextDistance d w v_next a 
-																			  else b)]
-	where next_out = getOutcomingVertices out_vs v_next		
-	
+                                                                              then  getNextDistance d w v_next a 
+                                                                              else b)]
+    where next_out = getOutcomingVertices out_vs v_next     
+    
 getVerticesWithChangedDistance :: [(Integer, Double)] -> [(Integer, Double)] -> [Integer]
 getVerticesWithChangedDistance xs ys = [a | (a,b) <- xs, isChangedDistance a b ys]
 
@@ -82,18 +82,18 @@ isChangedDistance c d xs = length [a | (a,b) <- xs, a == c, b /= d] > 0
 getNextVertex :: [(Integer, Bool)] -> [(Integer, Double)] -> [(Integer, [Integer])] -> Integer
 getNextVertex v d out_vs = let not_visited = [a | (a,b) <- v, b == False];
                                having_outcoming_vertices = [a | (a,b) <- d, length (getOutcomingVertices out_vs a) > 0]
-							   in (let candidates = intersect not_visited having_outcoming_vertices 
-								   in (let next_vertices = getClosest d candidates
-								   in (if length next_vertices > 0 then head next_vertices else 0)))
-								   
+                               in (let candidates = intersect not_visited having_outcoming_vertices 
+                                   in (let next_vertices = getClosest d candidates
+                                   in (if length next_vertices > 0 then head next_vertices else 0)))
+                                   
 getOutcomingVertices :: [(Integer, [Integer])] -> Integer => [Integer]
 getOutcomingVertices xs v = head [b | (a,b) <- xs, a == v]
 
 getClosest :: [(Integer, Double)] -> [Integer] -> [Integer]
 getClosest [] [] = []
 getClosest distances candidates = let filteredDistances = [(a,b) | (a,b) <- distances, a `elem` candidates]
-								  in (let minDistance = minimum $ map snd filteredDistances
-								  in  [a | (a,b) <- filteredDistances, b == minDistance])
+                                  in (let minDistance = minimum $ map snd filteredDistances
+                                  in  [a | (a,b) <- filteredDistances, b == minDistance])
 
 --extracting data from the non-trivial data structures that I've invented for this problem
 -- e.g. visited = [(1,False),(2,False),(3,False),(4,False),(5,False)] - tells us whether the vertex was
@@ -113,13 +113,13 @@ getVertexDistance d v = head [b | (a,b) <- d, a == v]
 
 getNextDistance :: [(Integer, Double)] -> [(String, Double)] -> Integer -> Integer -> Double
 getNextDistance d w v_next out_v = (let edgeCost = getEdgeWeight w v_next out_v; 
-									prev_d = getVertexDistance d out_v; next_d = getVertexDistance d v_next 
-									in minimum [prev_d, next_d + edgeCost])
-									
+                                    prev_d = getVertexDistance d out_v; next_d = getVertexDistance d v_next 
+                                    in minimum [prev_d, next_d + edgeCost])
+                                    
 getUpdatedParents :: [(Integer, Integer)] -> [Integer] -> Integer -> [(Integer, Integer)]
 getUpdatedParents p_old changed v_next = [(a, new_val) | (a,b) <- p_old, let new_val = (if a `elem` changed 
-																						then v_next 
-																						else b)]
+                                                                                        then v_next 
+                                                                                        else b)]
 
 --extracting elements from tuples
 fst_of_six :: (a, b, c, d, e, f) -> a  
